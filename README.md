@@ -59,7 +59,7 @@ CUDA_VISIBLE_DEVICES=0 python run.py train CHECKPOINT --max_epoch=20 -c default
 
 
 
-sudo docker run --gpus all -it --rm neural-audio:2 /bin/bash
+sudo docker run --gpus all -it --rm neural-audio:4 /bin/bash
 cp neural-audio-fp/eval/test_ids_icassp2021.npy .
 
 
@@ -67,3 +67,7 @@ cp neural-audio-fp/eval/test_ids_icassp2021.npy .
 sudo docker cp /home/paperspace/test_ids_icassp2021.npy 2bbd74c36673:/work/neural-audi
 o-fp/eval/
 86678_SENSAZIONI.wav
+
+
+
+python run.py train custom --max_epoch=20 -c default
