@@ -3,7 +3,7 @@ import pandas as pd
 from pydub import AudioSegment
 
 # Read the spreadsheet
-df = pd.read_excel('audio_files.xlsx')
+df = pd.read_excel('report_2804.xlsx')
 
 # Define a dictionary to map class numbers to folder names
 class_folders = {
@@ -30,10 +30,10 @@ def crop_audio(file_name, start_time, end_time, output_folder):
 
 # Process each row in the dataframe
 for index, row in df.iterrows():
-    file_name = row['file_name']
-    time_start = row['time_start']
-    time_end = row['time_end']
-    class_number = row['class']
+    file_name = row['Program']
+    time_start = row['Time_start']
+    time_end = row['Time_end']
+    class_number = row['Class']
 
     output_folder = class_folders.get(class_number, "others")
     crop_audio(file_name, time_start, time_end, output_folder)
