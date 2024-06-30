@@ -3,7 +3,7 @@ import pandas as pd
 from pydub import AudioSegment
 
 # Read the spreadsheet
-df = pd.read_excel('report_2804.xlsx')
+df = pd.read_excel('vitaindiretta_22109337.mp3.xlsx')
 
 # Print the first few rows to inspect the data before conversion
 print("Initial DataFrame:")
@@ -12,6 +12,7 @@ print(df.head())
 # Function to convert HH:MM:SS to total seconds
 def time_to_seconds(time_str):
     try:
+        time_str=str(time_str)
         h, m, s = map(int, time_str.split(':'))
         return h * 3600 + m * 60 + s
     except Exception as e:
@@ -19,8 +20,8 @@ def time_to_seconds(time_str):
         return None
 
 # Apply the conversion function to Time_start and Time_end
-df['Time_start'] = df['Time_start'].apply(time_to_seconds)
-df['Time_end'] = df['Time_end'].apply(time_to_seconds)
+df['Time_start'] = df['Time start'].apply(time_to_seconds)
+df['Time_end'] = df['Time end'].apply(time_to_seconds)
 
 # Print the first few rows after conversion to inspect NaN values
 print("DataFrame after conversion to seconds:")
@@ -63,7 +64,7 @@ for index, row in df.iterrows():
     file_name = row['Program']
     time_start = row['Time_start']
     time_end = row['Time_end']
-    class_number = row['Class']
+    class_number = row['class']
 
     # Validate the row data
     if pd.isna(file_name) or pd.isna(time_start) or pd.isna(time_end) or pd.isna(class_number):
