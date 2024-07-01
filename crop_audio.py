@@ -61,7 +61,7 @@ def crop_audio(file_name, start_time, end_time, output_folder):
 
 # Process each row in the dataframe
 for index, row in df.iterrows():
-    file_name = row['Program']
+    file_name = row['program']
     time_start = row['Time_start']
     time_end = row['Time_end']
     class_number = row['class']
