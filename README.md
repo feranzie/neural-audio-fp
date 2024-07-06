@@ -71,3 +71,7 @@ o-fp/eval/
 
 
 python run.py train custom --max_epoch=20 -c default
+
+
+# add SSH to machine
+echo "" >> ~/.ssh/authorized_keys
