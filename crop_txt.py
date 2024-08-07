@@ -1,15 +1,17 @@
 from pydub import AudioSegment
 import os
 
+
+file_name="rai1_20211017120000_20211017140000"
 # Load the input audio file
-input_audio_file = "rai1_20211017120000_20211017140000.mp3"  # Replace with your audio file
+input_audio_file = f"{file_name}.mp3"  # Replace with your audio file
 
 # Create directories for music and noise
 os.makedirs("Music", exist_ok=True)
 os.makedirs("Noise", exist_ok=True)
 
 # Read the timestamps and audio classes from the text file
-with open("rai1_20211017120000_20211017140000.txt", "r") as f:  # Replace with your txt file
+with open(f"{file_name}.txt", "r") as f:  # Replace with your txt file
     lines = f.readlines()
 
 # Iterate through each row and process the audio
