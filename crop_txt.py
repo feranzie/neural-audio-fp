@@ -58,16 +58,16 @@ for j in audio_files:
         end_time = float(end_time)* 1000  # Convert to milliseconds
         audio_class = int(audio_class)
 
-        print (f"start_time: {start_time}, end_time: {end_time}, audio_class: {audio_class} ")
+        print (f" audio file:{j}, start_time: {start_time}, end_time: {end_time}, audio_class: {audio_class} ")
         # Load the audio file and extract the clip
         audio = AudioSegment.from_file(input_audio_file)
         audio_clip = audio[start_time:end_time]
 
         # Save the clip to the appropriate folder
         if audio_class == 1:
-            audio_clip.export(f"Noise/{j}clip_{i+1}.mp3", format="mp3")
+            audio_clip.export(f"Noise/{j}_clip_{i+1}.mp3", format="mp3")
         elif audio_class == 2:
-            audio_clip.export(f"Music/{j}clip_{i+1}.mp3", format="mp3")
+            audio_clip.export(f"Music/{j}_clip_{i+1}.mp3", format="mp3")
 
     print(f"Audio clips have been split and saved successfully for {j}.")
 
