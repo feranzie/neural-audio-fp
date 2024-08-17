@@ -2,7 +2,7 @@ import pandas as pd
 import re
 
 # Load the CSV file
-file_path = 'your_file_path.csv'
+file_path = '2s_detail.csv'
 df = pd.read_csv(file_path, header=None)
 
 # Function to extract the segment number and timestamp from the query
@@ -24,6 +24,13 @@ def extract_base_path(query):
         return base_path
     return query
 
+# Function to convert milliseconds to hh:mm:ss:ms format
+def ms_to_time_format(milliseconds):
+    seconds, ms = divmod(milliseconds, 1000)
+    minutes, seconds = divmod(seconds, 60)
+    hours, minutes = divmod(minutes, 60)
+    return f"{int(hours):02}:{int(minutes):02}:{int(seconds):02}:{int(ms):03}"
+
 # Initialize variables to store the processed data
 combined_rows = []
 
@@ -43,10 +50,12 @@ for index, row in df.iterrows():
         prev_end = end_time
         prev_score = max(prev_score, score)
     else:
-        # Save the previous combined row with the base path
+        # Save the previous combined row with the base path and time format conversion
         if prev_query:
             base_query = extract_base_path(prev_query)
-            combined_rows.append([base_query, prev_answer, prev_score, prev_start, prev_end])
+            start_time_formatted = ms_to_time_format(prev_start)
+            end_time_formatted = ms_to_time_format(prev_end)
+            combined_rows.append([base_query, prev_answer, prev_score, start_time_formatted, end_time_formatted])
         # Update the previous row variables
         prev_query = query
         prev_answer = answer
@@ -54,16 +63,18 @@ for index, row in df.iterrows():
         prev_end = end_time
         prev_score = score
 
-# Save the last combined row with the base path
+# Save the last combined row with the base path and time format conversion
 if prev_query:
     base_query = extract_base_path(prev_query)
-    combined_rows.append([base_query, prev_answer, prev_score, prev_start, prev_end])
+    start_time_formatted = ms_to_time_format(prev_start)
+    end_time_formatted = ms_to_time_format(prev_end)
+    combined_rows.append([base_query, prev_answer, prev_score, start_time_formatted, end_time_formatted])
 
-# Convert the combined rows into a dataframe with start and stop columns
+# Convert the combined rows into a dataframe with formatted start and stop times
 combined_df = pd.DataFrame(combined_rows, columns=['query', 'answer', 'score', 'query_start', 'query_stop'])
 
 # Save the processed data to a new CSV file
-combined_df.to_csv('processed_file_with_base_paths.csv', index=False)
+combined_df.to_csv('2s_processed_file_with_formatted_times.csv', index=False)
 
 # Show the combined data
 combined_df.head()
