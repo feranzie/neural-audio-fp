@@ -1,52 +1,52 @@
-import csv
+import pandas as pd
 import re
 
-def process_segments(input_csv, output_csv):
-    # Dictionary to hold concatenated segments
-    segments_dict = {}
+# Load the CSV file
+file_path = 'your_file_path.csv'
+df = pd.read_csv(file_path, header=None)
 
-    with open(input_csv, mode='r', newline='', encoding='utf-8') as infile:
-        reader = csv.reader(infile)
-        next(reader)  # Skip header if there is one
+# Function to extract the segment number and timestamp from the query
+def extract_segment_info(query):
+    segment_match = re.search(r'segment_(\d+)', query)
+    timestamp_match = re.search(r'_(\d+)-(\d+)\.mp3', query)
+    if segment_match and timestamp_match:
+        segment_number = int(segment_match.group(1))
+        start_time = int(timestamp_match.group(1))
+        end_time = int(timestamp_match.group(2))
+        return segment_number, start_time, end_time
+    return None, None, None# Initialize variables to store the processed data
+combined_rows = []
 
-        for row in reader:
-            query, answer, score = row
-            score = float(score)
+# Iterate through the rows of the dataframe
+prev_query, prev_answer, prev_start, prev_end, prev_score = None, None, None, None, None
+for index, row in df.iterrows():
+    # Skip header ro
+    if index == 0:
+        continue
+    query, answer, score = row[0], row[1], float(row[2])
+    segment_number, start_time, end_time = extract_segment_info(query)
+    
+    if prev_answer == answer and prev_end == start_time:
+        # Combine segments and update the end_time and score
+        combined_query = f"{prev_query.split('_')[0]}_{prev_start}-{end_time}.mp3"
+        prev_query = combined_query
+        prev_end = end_time
+        prev_score = max(prev_score, score)
+    else:
+        # Save the previous combined rowif prev_query:
+        combined_rows.append([prev_query, prev_answer, prev_score])
+        # Update the previous row variables
+        prev_query = query
+        prev_answer = answer
+        prev_start = start_time
+        prev_end = end_time
+        prev_score = score
 
-            # Extract segment number from the query
-            match = re.search(r'segment_(\d+)', query)
-            if match:
-                segment_number = int(match.group(1))
-                # Create a key based on the answer
-                key = (answer, segment_number)
+# Save the last combined rowif prev_query:
+    combined_rows.append([prev_query, prev_answer, prev_score])
 
-                if key not in segments_dict:
-                    segments_dict[key] = {
-                        'query_segments': [segment_number],
-                        'max_score': score,
-                        'start_time': int(query.split('_')[-1].split('-')[0]),
-                        'end_time': int(query.split('_')[-1].split('-')[1].split('.')[0])
-                    }
-                else:
-                    # Update the max score if current score is higher
-                    segments_dict[key]['max_score'] = max(segments_dict[key]['max_score'], score)
-                    segments_dict[key]['query_segments'].append(segment_number)
+# Convert the combined rows into a dataframe
+combined_df = pd.DataFrame(combined_rows, columns=['query', 'answer', 'score'])
 
-                    # Update the end time based on the new segment
-                    segments_dict[key]['end_time'] = int(query.split('_')[-1].split('-')[1].split('.')[0])
-
-    # Write the results to the output CSV
-    with open(output_csv, mode='w', newline='', encoding='utf-8') as outfile:
-        writer = csv.writer(outfile)
-        writer.writerow(['query', 'answer', 'score'])  # Write header
-
-        for (answer, _), data in segments_dict.items():
-            # Create concatenated query
-            concatenated_segments = '+'.join(map(str, data['query_segments']))
-            new_query = f"../TestOlafRN/Recordings/new/s-CZWGsZK4_2024-03-01_17-00-02.mp3/segment_{concatenated_segments}_{data['start_time']}-{data['end_time']}.mp3"
-            writer.writerow([new_query, answer, data['max_score']])
-
-if __name__ == "__main__":
-    input_csv_file = 'input.csv'  # Replace with your input CSV file path
-    output_csv_file = 'output.csv'  # Replace with your desired output CSV file path
-    process_segments(input_csv_file, output_csv_file)
+# Save the processed data to a new CSV file
+combined_df.to_csv('processed_file.csv', index=False)
