@@ -30,9 +30,6 @@ df = pd.read_csv(input_csv)
 df['start'] = pd.to_timedelta(df['start'])
 df['end'] = pd.to_timedelta(df['end'])
 
-
-#audio_file_path = 's-CZWGsZK4_2024-09-24_17-00-03.mp3'  # Replace with your actual audio file path
-
 # Load the audio file
 audio = AudioSegment.from_file(audio_file_path)
 
@@ -58,7 +55,6 @@ for index, row in df.iterrows():
         output_dir = output_dir_music
     else:
         output_dir = output_dir_no_music
-    print(index)
 
     # Export the segment to the appropriate directory
     segment.export(os.path.join(output_dir, f'{audio_file_path}_{start_time}_{end_time}.mp3'), format='mp3')
