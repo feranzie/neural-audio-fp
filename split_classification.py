@@ -34,8 +34,8 @@ df['end'] = pd.to_timedelta(df['end'])
 audio = AudioSegment.from_file(audio_file_path)
 
 # Create output directories if they do not exist
-output_dir_music = f'{output_dir}/music_segments'
-output_dir_no_music = f'{output_dir}/no_music_segments'
+output_dir_music = os.path.join(output_dir, "music_segments")
+output_dir_no_music = os.path.join(output_dir, "no_music_segments") 
 
 os.makedirs(output_dir_music, exist_ok=True)
 os.makedirs(output_dir_no_music, exist_ok=True)
@@ -52,9 +52,12 @@ for index, row in df.iterrows():
 
     # Determine the output directory based on the class
     if row['class'] == 'music':
-        output_dir = output_dir_music
+        output_path = output_dir_music
     else:
-        output_dir = output_dir_no_music
+        output_path = output_dir_no_music
 
     # Export the segment to the appropriate directory
-    segment.export(os.path.join(output_dir, f'{audio_file_path}_{start_time}_{end_time}.mp3'), format='mp3')
+    audio_file_name = os.path.basename(audio_file_path)  # Get just the file name
+    segment.export(os.path.join(output_path, f'{audio_file_name}_{start_time}_{end_time}.mp3'), format='mp3')
+
+    print(f"Saving segment to: {os.path.join(output_path, f'{audio_file_name}_{start_time}_{end_time}.mp3')}")
