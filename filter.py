@@ -1,7 +1,7 @@
 import pandas as pd
 import re
 import argparse
-
+import os 
 # Define the command-line arguments
 parser = argparse.ArgumentParser(description='Process CSV file and save the processed data.')
 parser.add_argument('--input', type=str, help='Path to the input CSV file', required=True)
@@ -106,6 +106,9 @@ combined_df = combined_df[combined_df['duration_ms'] >= 3000]
 combined_df = combined_df.drop(columns=['query_start_ms', 'query_stop_ms', 'duration_ms'])
 
 
+output_dir = os.path.dirname(args.output)
+if output_dir and not os.path.exists(output_dir):
+    os.makedirs(output_dir)
 # Save the processed data to a new CSV file
 output_file_path = args.output
 combined_df.to_csv(output_file_path, index=False)
